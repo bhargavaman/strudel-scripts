@@ -6,6 +6,35 @@ register('acidenv', (x, pat) => pat.lpf(100)
 
 setGainCurve(x => Math.pow(x, 2))
 
+/**
+ * Quick Arrange
+ * Allows to arrange multiple patterns together over multiple cycles.
+ * Takes a variable number of arrays with two elements specifying the number of cycles and the pattern to use.
+ *
+ * @return {Pattern}
+ * @example
+ * qar(
+ *   4, "<c a f e>(3,8)",
+ *   2, "<g a>(5,8)"
+ * ).note()
+ */
+window.qar = function(...input) {
+
+  if (input.length % 2 !== 0) {
+    throw new Error('Arrange needs a length paramter for each pattern (length, pattern, length, pattern)');
+  }
+  let sects = [];
+  let total = 0;
+  for (let i = 0; i < input.length; i += 2) {
+    let cycles = input.at(i);
+    total += cycles;
+
+    let pattern = input.at(i + 1);
+    sects.push([cycles, pattern.fast(cycles)]);
+  }
+  return stepcat(...sects).slow(total);
+}
+
 window.blockArrange = function (patArr, modifiers = []) {
   return stack(
     ...patArr.map(([pat, maskPat]) => {
