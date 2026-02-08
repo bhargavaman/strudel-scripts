@@ -186,6 +186,13 @@ register('trancegate', (density, seed, length, x) => {
   return x.struct(rand.mul(density).round().seg(16).rib(seed, length)).fill().clip(.7)
 })
 
+//Better trancegate
+register('tgate', (amt, cycle,length, pat) => {
+  amt = reify(amt)
+  return pat.seg(16).degradeBy(amt.mul(-1).add(1))
+    .rib(cycle,length).fill().clip(.7)
+})
+
 //increasing the delay increases the feedback as well
 register('dly', (amt, x) =>{ 
   amt = reify(amt)
@@ -491,6 +498,15 @@ $: s("piano").over(
 Pattern.prototype.over = function(...inp) {
   return this.set.out(stack(...inp))
 }
+
+Pattern.prototype.overin = function(...inp) {
+  return this.set.in(stack(...inp))
+}
+
+window.sb = register('sb', (p, cb, pat) => {
+ return pat.sometimesBy(p, cb);
+})
+
 
 window.SCALE = 'e:minor'
 
